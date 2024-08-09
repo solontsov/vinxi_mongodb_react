@@ -1,0 +1,16 @@
+
+body, input {
+  background-color: black;
+  color: rgb(201, 195, 195);
+}
+
+.list-item {
+  color:rgb(189, 202, 189);
+  /* border: 1px solid wheat; */
+}
+
+button {
+  background-color: #333;
+  color: white;
+
+}

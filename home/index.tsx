@@ -4,14 +4,14 @@ import ReactDOM from "react-dom/client";
 import { useState, useEffect } from "react";
 
 import "./index.css";
-import { recipe } from '../metadata/recipes';
+import { Recipe } from '../metadata/recipes';
 
 
 import { RecipeForm } from './Components/RecipeForm';
 
 function App() {
 
-  const [recipes, setRecipes] = useState<recipe[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
 
   const updateRecipesList = () => {
     fetch("/api/mongodb")

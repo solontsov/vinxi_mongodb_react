@@ -1,8 +1,8 @@
 import { eventHandler, getRequestURL } from "vinxi/http";
 import { readBody } from "vinxi/http";
 
-import { MongoClient } from "mongodb";
-import { recipe } from "../metadata/recipes";
+import { MongoClient, Collection } from "mongodb";
+import { Recipe } from "../metadata/recipes";
 
 // Replace the placeholder connection string below with your
 // Atlas cluster specifics. Be sure it includes
@@ -14,9 +14,61 @@ import userData from "../../cred/mongodb0.mjs"; //this hides credentials, change
 const [user, password, cluster] = userData;
 const uri = `mongodb+srv://${user}:${password}@${cluster}.mongodb.net/?retryWrites=true&w=majority`;
 
-const recipeArray: recipe[] = [];
+const recipeArray: Recipe[] = [];
 
-async function run() {
+type dbCommand = (collection: Collection, recipe?: Recipe) => void;
+
+const addRecipe: dbCommand = async (collection, recipe) => {
+  /*
+   *  *** INSERT DOCUMENTS ***
+   *
+   * You can insert individual documents using collection.insert().
+   */
+  try {
+    const insertResult = await collection.insert(recipe);
+    console.log(
+      `${insertResult.insertedCount} documents successfully inserted.\n`
+    );
+  } catch (err) {
+    console.error(
+      `Something went wrong trying to insert the new documents: ${err}\n`
+    );
+  }
+};
+
+const reloadRecipes: dbCommand = async (collection) => {
+  // TODO:
+  recipeArray.length = 0;
+  /*
+   * *** FIND DOCUMENTS ***
+   *
+   * Now that we have data in Atlas, we can read it. To retrieve all of
+   * the data in a collection, we call Find() with an empty filter.
+   * The Builders class is very helpful when building complex  } catch (err) {
+
+   * filters, and is used here to show its most basic use.
+   */
+
+  const findQuery = { prepTimeInMinutes: { $lt: 145 } };
+
+  try {
+    const cursor = await collection.find(findQuery).sort({ name: 1 });
+    await cursor.forEach((item) => {
+      recipeArray.push(item);
+      console.log(
+        `${item.name} has ${item.ingredients.length} ingredients and takes ${item.prepTimeInMinutes} minutes to make.`
+      );
+    });
+    // add a linebreak
+    console.log();
+  } catch (err) {
+    console.error(
+      `Something went wrong trying to find the documents: ${err}\n`
+    );
+  }
+};
+
+async function run(command: dbCommand, recipe?: Recipe) {
   // TODO:
 
   // The MongoClient is the object that references the connection to our
@@ -39,32 +91,8 @@ async function run() {
   const database = client.db(dbName);
   const collection = database.collection(collectionName);
 
-  /*
-   * *** FIND DOCUMENTS ***
-   *
-   * Now that we have data in Atlas, we can read it. To retrieve all of
-   * the data in a collection, we call Find() with an empty filter.
-   * The Builders class is very helpful when building complex
-   * filters, and is used here to show its most basic use.
-   */
-
-  const findQuery = { prepTimeInMinutes: { $lt: 145 } };
-
-  try {
-    const cursor = await collection.find(findQuery).sort({ name: 1 });
-    await cursor.forEach((item) => {
-      recipeArray.push(item);
-      console.log(
-        `${item.name} has ${item.ingredients.length} ingredients and takes ${item.prepTimeInMinutes} minutes to make.`
-      );
-    });
-    // add a linebreak
-    console.log();
-  } catch (err) {
-    console.error(
-      `Something went wrong trying to find the documents: ${err}\n`
-    );
-  }
+  // TODO:
+  await command(collection, recipe);
 
   // Make sure to call close() on your client to perform cleanup operations
   await client.close();
@@ -74,8 +102,7 @@ export default eventHandler(async (event) => {
   const info = getRequestURL(event);
   if (info.pathname.startsWith("/api/mongodb")) {
     // TODO:
-    recipeArray.length = 0;
-    await run().catch(console.dir);
+    await run(reloadRecipes).catch(console.dir);
 
     return recipeArray;
   }
@@ -89,6 +116,7 @@ export default eventHandler(async (event) => {
 
     const body = await readBody(event);
     console.log(body);
+    await run(addRecipe, body).catch(console.dir);
 
     return { addRecipe: "addRecipe" };
   }

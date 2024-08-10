@@ -11,8 +11,10 @@ export const RecipeForm = () => {
         const { name, value } = e.target;
         setRecipe({
             ...recipe,
-            [name]: value,
+            [name]: name === 'prepTimeInMinutes' ? Number(value) : value,
         });
+        console.log(recipe);
+
     };
     const handleSubmit = async (e) => {
         e.preventDefault();

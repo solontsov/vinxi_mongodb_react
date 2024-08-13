@@ -25,9 +25,9 @@ const addRecipe: dbCommand = async (collection, recipe) => {
    * You can insert individual documents using collection.insert().
    */
   try {
-    const insertResult = await collection.insert(recipe);
-    console.log(
-      `${insertResult.insertedCount} documents successfully inserted.\n`
+    const insertResult = await collection.insertOne(recipe);
+    console.log(insertResult,
+      `  successfully inserted.\n`
     );
   } catch (err) {
     console.error(
@@ -37,7 +37,8 @@ const addRecipe: dbCommand = async (collection, recipe) => {
 };
 
 const reloadRecipes: dbCommand = async (collection) => {
-  // TODO:
+  
+  //clear recipeArray
   recipeArray.length = 0;
   /*
    * *** FIND DOCUMENTS ***
@@ -49,18 +50,20 @@ const reloadRecipes: dbCommand = async (collection) => {
    * filters, and is used here to show its most basic use.
    */
 
-  const findQuery = { prepTimeInMinutes: { $lt: 145 } };
+  // TODO: implement filter 
+  
+  //const findQuery = { prepTimeInMinutes: { $lt: 145 } };
 
   try {
-    const cursor = await collection.find(findQuery).sort({ name: 1 });
-    await cursor.forEach((item) => {
-      recipeArray.push(item);
-      console.log(
-        `${item.name} has ${item.ingredients.length} ingredients and takes ${item.prepTimeInMinutes} minutes to make.`
-      );
-    });
-    // add a linebreak
-    console.log();
+    // const cursor = await collection.find(findQuery).sort({ name: 1 });
+    const cursor = await collection.find().sort({ name: 1 });
+    while (await cursor.hasNext()) {
+      const recipe  = await cursor.next()
+      // console.log(recipe)
+      recipeArray.push(recipe);
+      
+    }
+   
   } catch (err) {
     console.error(
       `Something went wrong trying to find the documents: ${err}\n`
@@ -69,7 +72,6 @@ const reloadRecipes: dbCommand = async (collection) => {
 };
 
 async function run(command: dbCommand, recipe?: Recipe) {
-  // TODO:
 
   // The MongoClient is the object that references the connection to our
   // datastore (Atlas, for example)
@@ -115,9 +117,13 @@ export default eventHandler(async (event) => {
     // await run().catch(console.dir);
 
     const body = await readBody(event);
+    // body.ingredients.push("sugar")
     console.log(body);
-    await run(addRecipe, body).catch(console.dir);
+    console.log(typeof body);
 
-    return { addRecipe: "addRecipe" };
+    await run(addRecipe, body).catch(console.dir);
+    //await run(reloadRecipes).catch(console.dir);
+
+    return recipeArray;
   }
 });

@@ -1,9 +1,8 @@
 
 
 Add recipe:
-  ☐ open RecipeForm for entering data:
-    ☐ 
-  ☐ update list if a new recipe is saved
+  ✔ open RecipeForm for entering data: @done(24-08-17 22:34)
+  ✔ update list if a new recipe is saved @done(24-08-17 22:34)
   
 
 Edit recipe:
@@ -13,3 +12,4 @@ Edit recipe:
 Interface:
   ✔ Table view @started(24-08-15 15:04) @done(24-08-17 20:19) @lasted(2d5h15m43s)
   ☐ Show Delete, if a row is checked
+  ☐ Ingradients

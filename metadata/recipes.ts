@@ -1,5 +1,5 @@
 export type Recipe = {
-    _id: string;
+    _id?: string;
     name: string;
     ingredients: string [];
     prepTimeInMinutes: number;

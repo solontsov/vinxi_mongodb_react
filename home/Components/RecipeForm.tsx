@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
 import "../index.css";
-import { recipe } from '../../metadata/recipes';
+import { Recipe } from '../../metadata/recipes';
 
-export const RecipeForm = () => {
+export const RecipeForm = ({ setShowRecipeForm, setButtonClicked }) => {
 
-    const [recipe, setRecipe] = useState<recipe>({ name: 'name recipe', prepTimeInMinutes: 0, ingredients: [] });
+    const [recipe, setRecipe] = useState<Recipe>({ name: 'name recipe', prepTimeInMinutes: 0, ingredients: [] });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -31,10 +31,24 @@ export const RecipeForm = () => {
         } catch (error) {
             console.error('Error:', error);
         }
+        setButtonClicked('ok');
+        setShowRecipeForm(false);
+
     };
+
+    const handleCancel = () => {
+        setButtonClicked('cancel');
+        setShowRecipeForm(false);
+    }
 
     return (
         <form onSubmit={handleSubmit}>
+            <h2>Recipes list</h2>
+            <nav>
+                <button type="submit">OK</button>
+                <button type="button" onClick={handleCancel}>Cancel</button>
+
+            </nav>
             <label>
                 Name:
                 <input type="text" name="name" value={recipe.name} onChange={handleChange} />
@@ -45,7 +59,6 @@ export const RecipeForm = () => {
                 <input type="number" name="prepTimeInMinutes" value={recipe.prepTimeInMinutes} onChange={handleChange} />
             </label>
             <br />
-            <button type="submit">Submit</button>
         </form>
 
     )

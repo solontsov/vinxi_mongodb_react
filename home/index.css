@@ -4,13 +4,35 @@ body, input {
   color: rgb(201, 195, 195);
 }
 
+input[type="checkbox"] {
+  opacity: 0.5;
+}
+
 .list-item {
   color:rgb(189, 202, 189);
-  /* border: 1px solid wheat; */
 }
 
 button {
   background-color: #333;
   color: white;
+  font-size: 1em;
+  margin: 0.5em;
+  height: 2.2rem;
+}
 
+table {
+  border-collapse: collapse;
+}
+
+th {
+  word-wrap: break-word; 
+}
+
+td {
+  border-bottom: 1px solid #777;
+  padding: 0.5em;
+}
+
+tr:has(.checkbox:checked) {
+  background-color: #333;
 }

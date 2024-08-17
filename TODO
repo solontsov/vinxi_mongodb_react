@@ -1,0 +1,15 @@
+
+
+Add recipe:
+  ☐ open RecipeForm for entering data:
+    ☐ 
+  ☐ update list if a new recipe is saved
+  
+
+Edit recipe:
+  ☐ add button that opens RecipeForm
+  ☐ 
+
+Interface:
+  ✔ Table view @started(24-08-15 15:04) @done(24-08-17 20:19) @lasted(2d5h15m43s)
+  ☐ Show Delete, if a row is checked
